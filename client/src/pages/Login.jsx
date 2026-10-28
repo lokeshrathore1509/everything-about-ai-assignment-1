@@ -42,7 +42,11 @@ export default function Login() {
       toast.success(`Logged in as ${demoEmail.split('@')[0]}!`);
       navigate('/', { replace: true });
     } catch (err) {
-      setErrorMsg(err.response?.data?.message || 'Demo login failed');
+      setErrorMsg(
+        err.response?.data?.message ||
+        err.message ||
+        'Demo login failed. Please ensure the backend server is reachable.'
+      );
     } finally {
       setLoading(false);
     }
