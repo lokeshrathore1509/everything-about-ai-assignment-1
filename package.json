@@ -1,0 +1,26 @@
+{
+  "name": "group-expense-splitter",
+  "version": "1.0.0",
+  "description": "Full-Stack Group Expense Splitter with integer-paise precision and debt simplification",
+  "main": "server/src/server.js",
+  "scripts": {
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install",
+    "server": "cd server && npm run dev",
+    "client": "cd client && npm run dev",
+    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
+    "seed": "cd server && npm run seed",
+    "test": "cd server && npm run test",
+    "build": "cd client && npm run build"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "splitwise",
+    "expense-splitter",
+    "mern",
+    "fintech"
+  ],
+  "author": "",
+  "license": "MIT"
+}
