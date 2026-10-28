@@ -1,14 +1,25 @@
 const mongoose = require('mongoose');
 const config = require('./env');
 
+let cachedConn = null;
+
 const connectDB = async () => {
+  // If already connected in serverless container, reuse existing connection
+  if (mongoose.connection.readyState >= 1) {
+    return mongoose.connection;
+  }
+
   try {
-    const conn = await mongoose.connect(config.mongoUri);
-    console.log(`[Database] MongoDB Connected: ${conn.connection.host}`);
-    return conn;
+    if (!cachedConn) {
+      cachedConn = await mongoose.connect(config.mongoUri, {
+        bufferCommands: false
+      });
+      console.log(`[Database] MongoDB Connected: ${cachedConn.connection.host}`);
+    }
+    return cachedConn;
   } catch (error) {
     console.error(`[Database Error] Connection failed: ${error.message}`);
-    if (config.nodeEnv !== 'test') {
+    if (config.nodeEnv !== 'test' && !process.env.VERCEL) {
       process.exit(1);
     }
     throw error;
@@ -18,6 +29,7 @@ const connectDB = async () => {
 const disconnectDB = async () => {
   try {
     await mongoose.connection.close();
+    cachedConn = null;
     console.log('[Database] MongoDB connection closed');
   } catch (error) {
     console.error(`[Database Error] Disconnect failed: ${error.message}`);
