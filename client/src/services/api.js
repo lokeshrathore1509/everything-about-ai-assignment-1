@@ -1,7 +1,23 @@
 import axios from 'axios';
 
+const rawEnvUrl = import.meta.env.VITE_API_URL;
+let validApiUrl = null;
+
+if (rawEnvUrl && typeof rawEnvUrl === 'string') {
+  const trimmed = rawEnvUrl.trim();
+  // Reject unreplaced placeholder tags like <aapka-render-backend-url>
+  if (!trimmed.includes('<') && !trimmed.includes('>') && !trimmed.includes('your-backend')) {
+    try {
+      new URL(trimmed.startsWith('http') ? trimmed : `http://${trimmed}`);
+      validApiUrl = trimmed;
+    } catch {
+      validApiUrl = null;
+    }
+  }
+}
+
 const defaultBaseURL =
-  import.meta.env.VITE_API_URL ||
+  validApiUrl ||
   (import.meta.env.PROD
     ? 'https://everything-about-ai-assignment-1-1.onrender.com/api'
     : '/api');
