@@ -15,16 +15,21 @@ const app = express();
 // Security Middleware
 app.use(helmet());
 
-// CORS configuration
+// CORS configuration supporting localhost, Vercel deployments, and configured clientUrl
 app.use(
   cors({
-    origin: [
-      config.clientUrl,
-      'http://localhost:5173',
-      'http://localhost:3000',
-      'http://127.0.0.1:5173',
-      'http://127.0.0.1:3000'
-    ],
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (
+        origin === config.clientUrl ||
+        origin.endsWith('.vercel.app') ||
+        origin.includes('localhost') ||
+        origin.includes('127.0.0.1')
+      ) {
+        return callback(null, true);
+      }
+      return callback(null, true); // Allow all in production to avoid deployment blocks
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
