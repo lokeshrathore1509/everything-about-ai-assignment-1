@@ -1,3 +1,8 @@
+const dns = require('dns');
+try {
+  dns.setServers(['8.8.8.8', '8.8.4.4']);
+} catch (e) {}
+
 const app = require('../server/src/app');
 const { connectDB } = require('../server/src/config/db');
 
